@@ -156,7 +156,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
     const signOut = async () => {
         await supabase.auth.signOut()
-        router.refresh()
+        router.push('/')
     }
 
     const refreshProfile = async () => {

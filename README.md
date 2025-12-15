@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # CrowdShip - P2P Delivery Platform
 
 A full-stack peer-to-peer logistics platform built with Next.js, Supabase, and PostGIS.
@@ -215,3 +216,7 @@ MIT
 ## Support
 
 For issues or questions, please open an issue on GitHub.
+=======
+# Crowdship
+Deploying my Crowdship app
+>>>>>>> eb6b549e51abc94f6c720591241e2b1813687cde

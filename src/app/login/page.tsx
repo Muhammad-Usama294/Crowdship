@@ -25,6 +25,19 @@ export default function LoginPage() {
         setMessage(null)
 
         if (isSignUp) {
+            // Check if email already exists using database function
+            const { data: emailExists, error: checkError } = await supabase
+                .rpc('check_email_exists', { email_input: email })
+
+            if (emailExists) {
+                setMessage({
+                    type: 'error',
+                    text: 'This email is already registered. Please sign in instead or use a different email.'
+                })
+                setLoading(false)
+                return
+            }
+
             // Sign up
             const { data, error } = await supabase.auth.signUp({
                 email,
@@ -35,16 +48,38 @@ export default function LoginPage() {
             })
 
             if (error) {
-                setMessage({ type: 'error', text: error.message })
-            } else if (data.user && !data.session) {
-                setMessage({
-                    type: 'success',
-                    text: 'Account created! Please check your email to verify your account.'
-                })
-            } else if (data.user && data.session) {
-                // Account created and auto-confirmed
-                setMessage({ type: 'success', text: 'Account created! Logging you in...' })
-                setTimeout(() => router.push('/sender/dashboard'), 1000)
+                // Check if user already exists (fallback)
+                if (error.message.toLowerCase().includes('already registered') ||
+                    error.message.toLowerCase().includes('user already registered') ||
+                    error.message.toLowerCase().includes('already exists')) {
+                    setMessage({
+                        type: 'error',
+                        text: 'This email is already registered. Please sign in instead or use a different email.'
+                    })
+                } else {
+                    setMessage({ type: 'error', text: error.message })
+                }
+            } else if (data.user) {
+                // Check if this is actually a new user or existing user
+                const userCreatedAt = new Date(data.user.created_at).getTime()
+                const isNewUser = (Date.now() - userCreatedAt) < 5000 // Created within last 5 seconds
+
+                if (!isNewUser) {
+                    // This is an existing user, not a new registration
+                    setMessage({
+                        type: 'error',
+                        text: 'This email is already registered. Please sign in instead or use a different email.'
+                    })
+                } else if (!data.session) {
+                    setMessage({
+                        type: 'success',
+                        text: 'Account created! Please check your email to verify your account.'
+                    })
+                } else {
+                    // Account created and auto-confirmed
+                    setMessage({ type: 'success', text: 'Account created! Logging you in...' })
+                    setTimeout(() => router.push('/'), 1000)
+                }
             }
         } else {
             // Sign in
@@ -56,7 +91,7 @@ export default function LoginPage() {
             if (error) {
                 setMessage({ type: 'error', text: error.message })
             } else {
-                router.push('/sender/dashboard')
+                router.push('/')
             }
         }
         setLoading(false)
