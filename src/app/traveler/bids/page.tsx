@@ -149,11 +149,11 @@ export default function MyBidsPage() {
                                                         <div className="mt-3 flex items-center gap-4 text-sm">
                                                             <div>
                                                                 <span className="text-muted-foreground">Initial Price:</span>
-                                                                <span className="ml-2 font-semibold">${bid.shipments.offer_price}</span>
+                                                                <span className="ml-2 font-semibold">${Math.round(bid.shipments.offer_price * 0.90)}</span>
                                                             </div>
                                                             <div>
                                                                 <span className="text-muted-foreground">Your Offer:</span>
-                                                                <span className="ml-2 font-bold text-green-600">${bid.offered_price}</span>
+                                                                <span className="ml-2 font-bold text-green-600">${Math.round(bid.offered_price * 0.90)}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -199,7 +199,7 @@ export default function MyBidsPage() {
                                                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                                             <div>
                                                                 <span>Your Offer:</span>
-                                                                <span className="ml-2 font-semibold">${bid.offered_price}</span>
+                                                                <span className="ml-2 font-semibold">${Math.round(bid.offered_price * 0.90)}</span>
                                                             </div>
                                                             <div className="text-xs">
                                                                 {new Date(bid.created_at).toLocaleDateString()}

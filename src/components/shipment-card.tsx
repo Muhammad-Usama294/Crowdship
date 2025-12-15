@@ -19,6 +19,7 @@ interface ShipmentCardProps {
     onViewBids: (shipment: Shipment) => void
     onChat: (shipment: Shipment) => void
     onViewChats: (shipment: Shipment) => void
+    isSenderView?: boolean
 }
 
 export function ShipmentCard({
@@ -28,7 +29,8 @@ export function ShipmentCard({
     onCancelSuccess,
     onViewBids,
     onChat,
-    onViewChats
+    onViewChats,
+    isSenderView = false
 }: ShipmentCardProps) {
 
     const getStatusColor = (status: string) => {
@@ -43,6 +45,13 @@ export function ShipmentCard({
     }
 
     const [isHovered, setIsHovered] = useState(false)
+
+    // Calculate display price
+    // If sender view, show full price (Total Cost)
+    // If traveler view (default), show net earnings (Total * 0.90)
+    const displayPrice = isSenderView
+        ? shipment.offer_price
+        : Math.round(shipment.offer_price * 0.90)
 
     return (
         <motion.div
@@ -90,7 +99,8 @@ export function ShipmentCard({
                     <div className="flex items-center justify-between pt-2 border-t border-border/50">
                         <div className="flex items-center gap-1 font-semibold text-green-600 dark:text-green-400">
                             <DollarSign className="h-4 w-4" />
-                            {shipment.offer_price}
+                            {displayPrice}
+                            {isSenderView && <span className="text-xs text-muted-foreground ml-1">(My Offer)</span>}
                         </div>
                         <div className="text-muted-foreground text-xs">
                             {shipment.weight_kg} kg

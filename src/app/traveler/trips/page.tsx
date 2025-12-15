@@ -148,7 +148,7 @@ export default function TravelerTripsPage() {
     }
 
     const getTotalEarnings = (shipments: any[]) => {
-        return shipments.reduce((sum, s) => sum + (s.offer_price || 0), 0)
+        return shipments.reduce((sum, s) => sum + (Math.round((s.offer_price || 0) * 0.90)), 0)
     }
 
     const getStatusBadge = (status: string) => {
@@ -224,7 +224,7 @@ export default function TravelerTripsPage() {
                                         <div className="flex items-center justify-between pt-2 border-t">
                                             <div className="flex items-center gap-1 text-sm">
                                                 <DollarSign className="h-4 w-4" />
-                                                <span className="font-semibold">${shipment.offer_price}</span>
+                                                <span className="font-semibold">${Math.round(shipment.offer_price * 0.90)}</span>
                                             </div>
                                             <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                                 <Calendar className="h-4 w-4" />
@@ -297,7 +297,7 @@ export default function TravelerTripsPage() {
                                         <div className="flex items-center justify-between text-sm">
                                             <div className="flex items-center gap-1">
                                                 <DollarSign className="h-4 w-4" />
-                                                <span className="font-semibold">${shipment.offer_price}</span>
+                                                <span className="font-semibold">${Math.round(shipment.offer_price * 0.90)}</span>
                                             </div>
                                             <div className="text-muted-foreground">
                                                 {format(new Date(shipment.created_at), 'MMM dd, yyyy')}

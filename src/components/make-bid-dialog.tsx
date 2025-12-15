@@ -24,7 +24,7 @@ export function MakeBidDialog({ shipment, open, onOpenChange, onSuccess }: MakeB
 
     if (!shipment) return null
 
-    const initialPrice = shipment.offer_price
+    const initialPrice = Number((shipment.offer_price * 0.90).toFixed(2))
     const suggestedPrices = [
         { label: "-20%", value: initialPrice * 0.8 },
         { label: "-10%", value: initialPrice * 0.9 },
@@ -66,7 +66,13 @@ export function MakeBidDialog({ shipment, open, onOpenChange, onSuccess }: MakeB
         }
 
         setIsSubmitting(true)
-        const result = await createBid(shipment.id, price)
+
+        // Calculate Total Price from Traveler's Desired Earnings
+        // If traveler wants $9 (Input), usage Total must be $10
+        // Total = Earnings / 0.90
+        const priceTotal = Number((price / 0.90).toFixed(2))
+
+        const result = await createBid(shipment.id, priceTotal)
 
         if (result.success) {
             toast({
@@ -99,7 +105,7 @@ export function MakeBidDialog({ shipment, open, onOpenChange, onSuccess }: MakeB
                 <div className="space-y-4">
                     {/* Current Price */}
                     <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
-                        <span className="text-sm font-medium">Sender's Price:</span>
+                        <span className="text-sm font-medium">Your Earnings:</span>
                         <span className="text-2xl font-bold text-green-600">${initialPrice}</span>
                     </div>
 

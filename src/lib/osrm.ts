@@ -27,9 +27,8 @@ export async function getRoute(
         const response = await fetch(url)
 
         if (!response.ok) {
-            const errorText = await response.text()
-            console.error('Routing request failed:', response.status, errorText)
-            throw new Error(`Routing request failed: ${response.status} ${errorText}`)
+            // Suppress error as requested by user
+            return null
         }
 
         const data = await response.json()

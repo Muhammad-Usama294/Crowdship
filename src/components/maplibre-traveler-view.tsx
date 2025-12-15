@@ -301,7 +301,7 @@ export default function MapLibreTravelerView({
                     <div class="min-w-[200px] p-2">
                         <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded">PICKUP</span>
                         <h3 class="font-bold text-sm mt-1">${shipment.title}</h3>
-                        <p class="font-bold text-green-600">PKR ${shipment.offer_price}</p>
+                        <p class="font-bold text-green-600">PKR ${Math.round(shipment.offer_price * 0.90)}</p>
                     </div>`)
 
                 const marker = new maplibregl.Marker({ element: el })

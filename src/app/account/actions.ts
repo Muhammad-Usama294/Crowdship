@@ -27,7 +27,7 @@ export async function updateProfile(formData: FormData) {
     }
 
     revalidatePath('/account')
-    revalidatePath('/admin/users') // Refresh Admin List
+    revalidatePath('/k4jhf4jd82jd92jd/users') // Refresh Admin List
     return { success: true }
 }
 
@@ -106,7 +106,7 @@ export async function uploadAvatar(formData: FormData) {
     }
 
     revalidatePath('/account')
-    revalidatePath('/admin/users') // Refresh Admin List
+    revalidatePath('/k4jhf4jd82jd92jd/users') // Refresh Admin List
     return { success: true, avatarUrl: publicUrl }
 }
 

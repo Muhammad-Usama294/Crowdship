@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { Loader2, ArrowLeft, MapPin, Package, DollarSign, Locate, ArrowRight } from "lucide-react"
+import { Loader2, ArrowLeft, MapPin, Package, DollarSign, Locate, ArrowRight, Map as MapIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/use-toast"
 import { LocationSearchInput } from "@/components/location-search-input"
@@ -20,7 +20,7 @@ import { reverseGeocode } from "@/lib/geocoding"
 import { ProfileCompletionGuard } from "@/components/profile-completion-guard"
 
 // Dynamically import map to avoid SSR issues
-const TravelerMap = dynamic(() => import('@/components/maplibre-traveler-view'), {
+const TravelerMap = dynamic(() => import('@/components/leaflet-traveler-view'), {
     ssr: false,
     loading: () => <div className="h-full w-full bg-muted/20 animate-pulse flex items-center justify-center text-muted-foreground">Loading Map...</div>
 })
@@ -48,13 +48,12 @@ export default function CreateShipmentPage() {
 
     // Map selection mode
     const [selectingLocation, setSelectingLocation] = useState<'pickup' | 'dropoff' | null>(null)
+    const [showMapModal, setShowMapModal] = useState(false)
 
     // Scroll to map on mobile when selecting
-    const mapRef = useRef<HTMLDivElement>(null)
-
     const scrollToMap = () => {
-        if (window.innerWidth < 768 && mapRef.current) {
-            mapRef.current.scrollIntoView({ behavior: 'smooth' })
+        if (window.innerWidth < 768) {
+            setShowMapModal(true)
         }
     }
 
@@ -132,7 +131,8 @@ export default function CreateShipmentPage() {
             pickup_location: `POINT(${pickupCoords[0]} ${pickupCoords[1]})`,
             dropoff_location: `POINT(${dropoffCoords[0]} ${dropoffCoords[1]})`,
             weight_kg: parseFloat(weight),
-            offer_price: offerPrice,
+            // Store exact offer price (Sender pays $10, Traveler sees $9)
+            offer_price: Number(offerPrice),
             pickup_otp: pickupOtp,
             delivery_otp: deliveryOtp,
             status: 'pending',
@@ -365,8 +365,8 @@ export default function CreateShipmentPage() {
                     </motion.div>
                 </div>
 
-                {/* Right Panel: Map */}
-                <div ref={mapRef} className={`flex-1 relative transition-all duration-300 ${selectingLocation ? 'ring-4 ring-inset ring-primary/50' : ''}`}>
+                {/* Right Panel: Map (Desktop) */}
+                <div className={`hidden md:flex flex-1 relative transition-all duration-300 ${selectingLocation ? 'ring-4 ring-inset ring-primary/50' : ''}`}>
                     <TravelerMap
                         shipments={[]} // No shipments to display, just for selection
                         onMapClick={handleMapClick}
@@ -377,15 +377,50 @@ export default function CreateShipmentPage() {
 
                     {/* Map interaction hint overlay */}
                     {selectingLocation && (
-                        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 bg-background/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-primary animate-bounce">
-                            <p className="text-sm font-medium text-primary flex items-center gap-2">
-                                <MapPin className="h-4 w-4" />
-                                Click on map to select {selectingLocation} location
-                            </p>
+                        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground px-4 py-2 rounded-full shadow-lg font-medium animate-bounce z-[400] pointer-events-none">
+                            Click on map to set {selectingLocation} location
                         </div>
                     )}
                 </div>
+
+                {/* Mobile Map Button & Modal */}
+                <div className="md:hidden">
+                    <Button
+                        variant="outline"
+                        className="w-full mt-4 flex items-center gap-2"
+                        onClick={() => setShowMapModal(true)}
+                    >
+                        <MapIcon className="h-4 w-4" />
+                        {pickupCoords || dropoffCoords ? "View/Edit Locations on Map" : "Select Locations on Map"}
+                    </Button>
+
+                    {/* Full Screen Map Modal for Mobile */}
+                    {showMapModal && (
+                        <div className="fixed inset-0 z-50 bg-background flex flex-col">
+                            <div className="flex items-center justify-between p-4 border-b">
+                                <h3 className="font-semibold text-lg">Select Locations</h3>
+                                <Button size="sm" onClick={() => setShowMapModal(false)}>Done</Button>
+                            </div>
+                            <div className="relative flex-1">
+                                <TravelerMap
+                                    shipments={[]}
+                                    onMapClick={handleMapClick}
+                                    start={pickupCoords ? [pickupCoords[1], pickupCoords[0]] : null}
+                                    end={dropoffCoords ? [dropoffCoords[1], dropoffCoords[0]] : null}
+                                    onRouteFound={() => { }}
+                                />
+                                {selectingLocation && (
+                                    <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground px-4 py-2 rounded-full shadow-lg font-medium z-[1000] text-sm whitespace-nowrap pointer-events-none">
+                                        Tap to set {selectingLocation}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+
             </div>
-        </ProfileCompletionGuard>
+        </ProfileCompletionGuard >
     )
 }

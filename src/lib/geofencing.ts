@@ -1,3 +1,4 @@
+
 import * as turf from '@turf/turf'
 import pakistanGeoJson from '@/data/pakistan.json'
 
@@ -28,9 +29,11 @@ export function isInPakistan(lat: number, lng: number): boolean {
 }
 
 export const PAKISTAN_CENTER = { lat: 30.3753, lng: 69.3451 }
+
+// Tightened bounds for Pakistan to cut closer to the border
 export const PAKISTAN_BOUNDS = {
-    north: 37.084107,
-    south: 23.6345,
-    east: 77.8375,
-    west: 60.872
+    north: 37.5,    // Slightly increased to catch northern areas
+    south: 23.5,    // Coastal line
+    east: 77.5,     // Eastern border
+    west: 60.5      // Western border
 }

@@ -220,6 +220,7 @@ export default function SenderDashboard() {
                                     setChatsListShipmentId(shipment.id)
                                     setChatsListOpen(true)
                                 }}
+                                isSenderView={true}
                             />
                         ))}
                     </div>

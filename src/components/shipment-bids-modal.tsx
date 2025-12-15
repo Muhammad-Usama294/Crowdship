@@ -145,6 +145,7 @@ export function ShipmentBidsModal({
                 ) : (
                     <div className="space-y-4">
                         {bids.map((bid) => {
+                            // Compare Total vs Total
                             const priceDiff = bid.offered_price - initialPrice
                             const isPriceHigher = priceDiff > 0
                             const isPriceLower = priceDiff < 0
@@ -191,18 +192,6 @@ export function ShipmentBidsModal({
                                                 <span className="text-2xl font-bold text-primary">
                                                     ${bid.offered_price}
                                                 </span>
-                                                {isPriceHigher && (
-                                                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800">
-                                                        <TrendingUp className="h-3 w-3 mr-1" />
-                                                        +${priceDiff}
-                                                    </Badge>
-                                                )}
-                                                {isPriceLower && (
-                                                    <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800">
-                                                        <TrendingDown className="h-3 w-3 mr-1" />
-                                                        ${priceDiff}
-                                                    </Badge>
-                                                )}
                                             </div>
                                             {bid.status !== 'pending' && (
                                                 <Badge
@@ -219,53 +208,55 @@ export function ShipmentBidsModal({
                                         </div>
                                     </div>
 
-                                    {bid.status === 'pending' && (
-                                        <>
-                                            <Separator className="my-4" />
-                                            <div className="flex gap-2">
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => openChat(bid.users)}
-                                                    className="flex-1 gap-2"
-                                                >
-                                                    <MessageCircle className="h-4 w-4" />
-                                                    Chat
-                                                </Button>
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => handleRejectBid(bid.id)}
-                                                    disabled={processingBidId === bid.id}
-                                                    className="text-destructive hover:text-destructive border-destructive/20 hover:bg-destructive/10"
-                                                >
-                                                    {processingBidId === bid.id ? (
-                                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                                    ) : (
-                                                        <>
-                                                            <X className="h-4 w-4 mr-1" />
-                                                            Reject
-                                                        </>
-                                                    )}
-                                                </Button>
-                                                <Button
-                                                    size="sm"
-                                                    onClick={() => handleAcceptBid(bid.id)}
-                                                    disabled={processingBidId === bid.id}
-                                                    className="bg-primary hover:bg-primary/90 gap-2"
-                                                >
-                                                    {processingBidId === bid.id ? (
-                                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                                    ) : (
-                                                        <>
-                                                            <Check className="h-4 w-4" />
-                                                            Accept
-                                                        </>
-                                                    )}
-                                                </Button>
-                                            </div>
-                                        </>
-                                    )}
+                                    {
+                                        bid.status === 'pending' && (
+                                            <>
+                                                <Separator className="my-4" />
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => openChat(bid.users)}
+                                                        className="flex-1 gap-2"
+                                                    >
+                                                        <MessageCircle className="h-4 w-4" />
+                                                        Chat
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => handleRejectBid(bid.id)}
+                                                        disabled={processingBidId === bid.id}
+                                                        className="text-destructive hover:text-destructive border-destructive/20 hover:bg-destructive/10"
+                                                    >
+                                                        {processingBidId === bid.id ? (
+                                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                                        ) : (
+                                                            <>
+                                                                <X className="h-4 w-4 mr-1" />
+                                                                Reject
+                                                            </>
+                                                        )}
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        onClick={() => handleAcceptBid(bid.id)}
+                                                        disabled={processingBidId === bid.id}
+                                                        className="bg-primary hover:bg-primary/90 gap-2"
+                                                    >
+                                                        {processingBidId === bid.id ? (
+                                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                                        ) : (
+                                                            <>
+                                                                <Check className="h-4 w-4" />
+                                                                Accept
+                                                            </>
+                                                        )}
+                                                    </Button>
+                                                </div>
+                                            </>
+                                        )
+                                    }
                                 </div>
                             )
                         })}
@@ -286,6 +277,6 @@ export function ShipmentBidsModal({
                     />
                 )}
             </DialogContent>
-        </Dialog>
+        </Dialog >
     )
 }

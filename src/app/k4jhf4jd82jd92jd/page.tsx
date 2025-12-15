@@ -1,15 +1,46 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Shield, BarChart3, ArrowRight, Map, Users, AlertCircle } from "lucide-react"
+import { Shield, BarChart3, ArrowRight, Map, Users } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { createClient } from "@/lib/supabase/client"
+import { BusinessWallet, BusinessWalletTransaction } from "@/types/database"
+import { BusinessWalletCard } from "@/components/business-wallet-card"
 
 export default function AdminDashboardPage() {
+    const [businessWallet, setBusinessWallet] = useState<BusinessWallet | null>(null)
+    const [recentTransactions, setRecentTransactions] = useState<BusinessWalletTransaction[]>([])
+    const supabase = createClient()
+
+    useEffect(() => {
+        fetchBusinessWallet()
+    }, [])
+
+    async function fetchBusinessWallet() {
+        // Fetch wallet data
+        const { data: wallet } = await supabase
+            .from('business_wallet')
+            .select('*')
+            .single()
+
+        if (wallet) setBusinessWallet(wallet)
+
+        // Fetch recent transactions
+        const { data: transactions } = await supabase
+            .from('business_wallet_transactions')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(10)
+
+        if (transactions) setRecentTransactions(transactions)
+    }
+
     const cards = [
         {
-            href: "/admin/kyc",
+            href: "/k4jhf4jd82jd92jd/kyc",
             title: "KYC Actions",
             description: "Review pending identity verifications and manage user approvals.",
             icon: Shield,
@@ -18,7 +49,7 @@ export default function AdminDashboardPage() {
             buttonColor: "bg-blue-600 hover:bg-blue-700"
         },
         {
-            href: "/admin/analytics",
+            href: "/k4jhf4jd82jd92jd/analytics",
             title: "Platform Analytics",
             description: "View system health, user growth, shipment stats, and revenue metrics.",
             icon: BarChart3,
@@ -27,7 +58,7 @@ export default function AdminDashboardPage() {
             buttonColor: "bg-purple-600 hover:bg-purple-700"
         },
         {
-            href: "/admin/users",
+            href: "/k4jhf4jd82jd92jd/users",
             title: "User Management",
             description: "View all users, monitor ratings, and manage suspensions or bans.",
             icon: Users,
@@ -36,7 +67,7 @@ export default function AdminDashboardPage() {
             buttonColor: "bg-orange-600 hover:bg-orange-700"
         },
         {
-            href: "/admin/map",
+            href: "/k4jhf4jd82jd92jd/map",
             title: "Live Map",
             description: "Monitor active shipments geographically. View pickup and dropoff locations.",
             icon: Map,
@@ -57,6 +88,21 @@ export default function AdminDashboardPage() {
                 <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent inline-block">Admin Dashboard</h1>
                 <p className="text-lg text-muted-foreground">Welcome back, Admin. Select an area to manage.</p>
             </motion.div>
+
+            {/* Business Wallet Card */}
+            {businessWallet && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                    className="mb-8"
+                >
+                    <BusinessWalletCard
+                        wallet={businessWallet}
+                        recentTransactions={recentTransactions}
+                    />
+                </motion.div>
+            )}
 
             <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
                 {cards.map((card, index) => (

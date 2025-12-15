@@ -68,7 +68,7 @@ export default function AdminMapPage() {
     return (
         <div className="container py-8 space-y-6">
             <div className="flex items-center gap-4">
-                <Link href="/admin">
+                <Link href="/k4jhf4jd82jd92jd">
                     <Button variant="ghost" size="icon">
                         <ArrowLeft className="h-5 w-5" />
                     </Button>

@@ -50,7 +50,7 @@ export async function approveKYC(docId: string, userId: string) {
         })
     }
 
-    revalidatePath('/admin')
+    revalidatePath('/k4jhf4jd82jd92jd')
     console.log('Server: All updates successful')
     return { success: true }
 }
@@ -91,7 +91,7 @@ export async function rejectKYC(docId: string, adminNote: string) {
         }
     }
 
-    revalidatePath('/admin')
+    revalidatePath('/k4jhf4jd82jd92jd')
     return { success: true }
 }
 
@@ -108,8 +108,8 @@ export async function toggleUserSuspension(userId: string, isSuspended: boolean)
         return { error: error.message }
     }
 
-    revalidatePath('/admin')
-    revalidatePath('/admin/users')
+    revalidatePath('/k4jhf4jd82jd92jd')
+    revalidatePath('/k4jhf4jd82jd92jd/users')
     return { success: true }
 }
 
@@ -183,7 +183,7 @@ export async function syncUsers() {
             }
         }
 
-        revalidatePath('/admin/users')
+        revalidatePath('/k4jhf4jd82jd92jd/users')
         return {
             success: true,
             count: syncedCount,

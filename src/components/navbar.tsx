@@ -17,11 +17,13 @@ import { Label } from "@/components/ui/label"
 import { MapPin, Box, Truck, UserCircle, LogOut, User, Wallet } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle" // Assuming ThemeToggle is an existing component
 
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 
 export function Navbar() {
     const { user, profile, isTravelerMode, toggleTravelerMode, signOut } = useUser()
     const router = useRouter()
+    const pathname = usePathname()
+    const isAdmin = pathname?.startsWith('/k4jhf4jd82jd92jd')
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/60 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
@@ -50,7 +52,7 @@ export function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-6 ml-auto">
-                    {user && (
+                    {user && !isAdmin && (
                         <div className="flex items-center gap-3 bg-secondary/50 p-1.5 rounded-full border border-border/50">
                             <Switch
                                 id="traveler-mode"
@@ -71,53 +73,55 @@ export function Navbar() {
                     <div className="flex items-center gap-4">
                         <ThemeToggle />
                         {user ? (
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" className="relative h-9 w-9 rounded-full ring-2 ring-primary/20 hover:ring-primary/40 transition-all">
-                                        <Avatar className="h-9 w-9">
-                                            <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || user.email || ""} />
-                                            <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                                                {profile?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-56" align="end" forceMount>
-                                    <DropdownMenuLabel className="font-normal">
-                                        <div className="flex flex-col space-y-1">
-                                            <p className="text-sm font-medium leading-none">{profile?.full_name || 'User'}</p>
-                                            <p className="text-xs leading-none text-muted-foreground">
-                                                {user.email}
-                                            </p>
-                                        </div>
-                                    </DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem onClick={() => router.push('/account')}>
-                                        <User className="mr-2 h-4 w-4" />
-                                        <span>Profile</span>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => router.push('/sender/dashboard')}>
-                                        <MapPin className="mr-2 h-4 w-4" />
-                                        <span>Sender Dashboard</span>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => {
-                                        if (!isTravelerMode) toggleTravelerMode()
-                                        router.push('/traveler/dashboard')
-                                    }}>
-                                        <Truck className="mr-2 h-4 w-4" />
-                                        <span>Traveler Dashboard</span>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => router.push('/wallet')}>
-                                        <Wallet className="mr-2 h-4 w-4" />
-                                        <span>Wallet</span>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem onClick={signOut} className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20">
-                                        <LogOut className="mr-2 h-4 w-4" />
-                                        <span>Log out</span>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                            !isAdmin && (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" className="relative h-9 w-9 rounded-full ring-2 ring-primary/20 hover:ring-primary/40 transition-all">
+                                            <Avatar className="h-9 w-9">
+                                                <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || user.email || ""} />
+                                                <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                                                    {profile?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent className="w-56" align="end" forceMount>
+                                        <DropdownMenuLabel className="font-normal">
+                                            <div className="flex flex-col space-y-1">
+                                                <p className="text-sm font-medium leading-none">{profile?.full_name || 'User'}</p>
+                                                <p className="text-xs leading-none text-muted-foreground">
+                                                    {user.email}
+                                                </p>
+                                            </div>
+                                        </DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={() => router.push('/account')}>
+                                            <User className="mr-2 h-4 w-4" />
+                                            <span>Profile</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => router.push('/sender/dashboard')}>
+                                            <MapPin className="mr-2 h-4 w-4" />
+                                            <span>Sender Dashboard</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => {
+                                            if (!isTravelerMode) toggleTravelerMode()
+                                            router.push('/traveler/dashboard')
+                                        }}>
+                                            <Truck className="mr-2 h-4 w-4" />
+                                            <span>Traveler Dashboard</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => router.push('/wallet')}>
+                                            <Wallet className="mr-2 h-4 w-4" />
+                                            <span>Wallet</span>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={signOut} className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20">
+                                            <LogOut className="mr-2 h-4 w-4" />
+                                            <span>Log out</span>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            )
                         ) : (
                             <Link href="/login">
                                 <Button className="bg-primary hover:bg-primary/90 shadow-md shadow-primary/20">Sign In</Button>

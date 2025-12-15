@@ -214,7 +214,7 @@ export default function TravelerDashboard() {
                                         <CardTitle className="text-lg truncate">{shipment.title}</CardTitle>
                                         <Badge>{shipment.status.replace('_', ' ')}</Badge>
                                     </div>
-                                    <CardDescription>Earn ${shipment.offer_price}</CardDescription>
+                                    <CardDescription>Earn ${Math.round(shipment.offer_price * 0.90)}</CardDescription>
                                 </CardHeader>
                                 <CardContent className="text-sm space-y-4">
                                     <div className="space-y-1">

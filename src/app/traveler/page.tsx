@@ -36,7 +36,7 @@ import { Badge } from "@/components/ui/badge"
 import { motion, AnimatePresence } from "framer-motion"
 
 // Dynamic import for MapLibre Map component
-const TravelerMap = dynamic(() => import("@/components/maplibre-traveler-view"), {
+const TravelerMap = dynamic(() => import("@/components/leaflet-traveler-view"), {
     ssr: false,
     loading: () => <div className="h-full w-full bg-muted/20 animate-pulse flex items-center justify-center text-muted-foreground">Loading Map...</div>
 }) as React.ComponentType<any>;
@@ -77,6 +77,7 @@ function TravelerContent() {
 
     // Mobile Sidebar State
     const [showMobileList, setShowMobileList] = useState(false)
+    const [showMapModal, setShowMapModal] = useState(false)
 
     // Handle Open Chat
     const handleOpenChat = async (shipment: Shipment) => {
@@ -112,6 +113,34 @@ function TravelerContent() {
             })
         }
     }
+
+    // Realtime subscription to remove accepted/non-pending shipments
+    useEffect(() => {
+        const channel = supabase
+            .channel('traveler_view_changes')
+            .on(
+                'postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'shipments',
+                },
+                (payload) => {
+                    const updatedShipment = payload.new as Shipment
+                    // If a displayed shipment is no longer pending (e.g. accepted by sender), remove it
+                    if (updatedShipment.status !== 'pending') {
+                        setShipments((currentShipments) =>
+                            currentShipments.filter(s => s.id !== updatedShipment.id)
+                        )
+                    }
+                }
+            )
+            .subscribe()
+
+        return () => {
+            supabase.removeChannel(channel)
+        }
+    }, [])
 
     // Load current trip data from URL params if editing
     useEffect(() => {
@@ -392,6 +421,16 @@ function TravelerContent() {
                             {isSearching ? <Package className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
                             Find Available Shipments
                         </Button>
+
+                        {/* Mobile Map Toggle */}
+                        <Button
+                            variant="outline"
+                            className="w-full mt-2 md:hidden"
+                            onClick={() => setShowMapModal(true)}
+                        >
+                            <MapIcon className="mr-2 h-4 w-4" />
+                            View Map
+                        </Button>
                     </div>
 
                     {/* Results Count & Filter Info */}
@@ -448,7 +487,7 @@ function TravelerContent() {
                                                     </div>
                                                 </div>
                                                 <div className="text-right">
-                                                    <div className="text-lg font-bold text-green-600 dark:text-green-400">${pkg.offer_price}</div>
+                                                    <div className="text-lg font-bold text-green-600 dark:text-green-400">${Math.round(pkg.offer_price * 0.90)}</div>
                                                 </div>
                                             </div>
 
@@ -516,7 +555,12 @@ function TravelerContent() {
             </div>
 
             {/* Map Area */}
-            <div className="flex-1 h-full relative z-10 w-full">
+            <div className={`${showMapModal ? 'fixed inset-0 z-[50] flex flex-col bg-background' : 'hidden md:flex flex-1 h-full relative z-10 w-full'}`}>
+                {/* Mobile Map Header */}
+                <div className="md:hidden flex items-center justify-between p-4 border-b bg-background/80 backdrop-blur-md absolute top-0 left-0 right-0 z-[1001]">
+                    <h3 className="font-semibold text-lg">Route Map</h3>
+                    <Button size="sm" onClick={() => setShowMapModal(false)}>Done</Button>
+                </div>
                 {/* Search Hint Overlay */}
                 {selectionMode && (
                     <div className="absolute top-6 left-1/2 -translate-x-1/2 z-[1000] bg-background/90 backdrop-blur-md px-6 py-3 rounded-full shadow-xl border-2 border-primary text-sm font-semibold animate-in fade-in slide-in-from-top-4 flex items-center gap-2 text-primary">

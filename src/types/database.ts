@@ -74,5 +74,24 @@ export interface Message {
     receiver_id: string;
     content: string;
     created_at: string;
+    updated_at: string;
     is_read: boolean;
+}
+
+export interface BusinessWallet {
+    id: string;
+    balance: number;
+    total_earned: number;
+    total_withdrawn: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface BusinessWalletTransaction {
+    id: string;
+    shipment_id: string | null;
+    amount: number;
+    type: 'commission' | 'withdrawal';
+    description: string;
+    created_at: string;
 }
