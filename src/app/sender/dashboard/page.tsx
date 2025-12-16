@@ -19,7 +19,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { ChatDialog } from "@/components/chat-dialog"
 import { ChatsListDialog } from "@/components/chats-list-dialog"
 import { ShipmentCard } from "@/components/shipment-card"
-import { ProfileCompletionGuard } from "@/components/profile-completion-guard"
+// ProfileCompletionGuard removed - using inline prompts instead
 
 
 export default function SenderDashboard() {
@@ -173,114 +173,127 @@ export default function SenderDashboard() {
 
     if (loading) return <div className="container py-10">Loading...</div>
 
+    const hasIncompleteProfile = !profile?.full_name || !profile?.phone_number
+
     return (
-        <ProfileCompletionGuard>
-            <div className="container py-8">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-6">
-                    <h1 className="text-2xl sm:text-3xl font-bold">My Shipments</h1>
-                    <div className="flex gap-2 w-full sm:w-auto">
-                        <Link href="/wallet" className="flex-1 sm:flex-none">
-                            <Button variant="outline" className="w-full sm:w-auto">
-                                <Wallet className="mr-2 h-4 w-4" /> Wallet
-                            </Button>
-                        </Link>
-                        <Link href="/sender/create" className="flex-1 sm:flex-none">
-                            <Button className="w-full sm:w-auto">
-                                <Plus className="mr-2 h-4 w-4" /> New Shipment
-                            </Button>
-                        </Link>
-                    </div>
+        <div className="container py-8 space-y-6">
+            {/* Profile Completion Banner */}
+            {hasIncompleteProfile && (
+                <Alert className="border-orange-200 bg-orange-50 dark:bg-orange-950/20 dark:border-orange-900">
+                    <AlertCircle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                    <AlertTitle className="text-orange-900 dark:text-orange-100">Complete Your Profile</AlertTitle>
+                    <AlertDescription className="text-orange-800 dark:text-orange-200">
+                        Add your {!profile?.full_name && 'name'}{!profile?.full_name && !profile?.phone_number && ' and '}{!profile?.phone_number && 'phone number'} to unlock all features.
+                        <Link href="/account" className="ml-2 underline font-medium hover:text-orange-900 dark:hover:text-orange-50">Complete now →</Link>
+                    </AlertDescription>
+                </Alert>
+            )}
+
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
+
+                <h1 className="text-2xl sm:text-3xl font-bold">My Shipments</h1>
+                <div className="flex gap-2 w-full sm:w-auto">
+                    <Link href="/wallet" className="flex-1 sm:flex-none">
+                        <Button variant="outline" className="w-full sm:w-auto">
+                            <Wallet className="mr-2 h-4 w-4" /> Wallet
+                        </Button>
+                    </Link>
+                    <Link href="/sender/create" className="flex-1 sm:flex-none">
+                        <Button className="w-full sm:w-auto">
+                            <Plus className="mr-2 h-4 w-4" /> New Shipment
+                        </Button>
+                    </Link>
                 </div>
-
-
-                {shipments.length === 0 ? (
-                    <div className="text-center py-20 border rounded-lg bg-muted/10">
-                        <Package className="mx-auto h-12 w-12 text-muted-foreground" />
-                        <h3 className="mt-4 text-lg font-semibold">No shipments yet</h3>
-                        <p className="text-muted-foreground mb-4">Create your first shipment to get started</p>
-                        <Link href="/sender/create">
-                            <Button>Create Shipment</Button>
-                        </Link>
-                    </div>
-                ) : (
-                    <div className="grid gap-6 md:grid-cols-2">
-                        {shipments.map((shipment) => (
-                            <ShipmentCard
-                                key={shipment.id}
-                                shipment={shipment}
-                                onRate={handleRateShipment}
-                                isRated={ratedShipments.has(shipment.id)}
-                                onCancelSuccess={fetchShipments}
-                                onViewBids={(shipment) => {
-                                    setBidsShipment(shipment)
-                                    setBidsModalOpen(true)
-                                }}
-                                onChat={handleOpenChat}
-                                onViewChats={(shipment) => {
-                                    setChatsListShipmentId(shipment.id)
-                                    setChatsListOpen(true)
-                                }}
-                                isSenderView={true}
-                            />
-                        ))}
-                    </div>
-                )}
-
-                {/* Chat Dialog */}
-                {chatShipment && travelerInfo && (
-                    <ChatDialog
-                        open={chatOpen}
-                        onOpenChange={setChatOpen}
-                        shipmentId={chatShipment.id}
-                        otherUserId={travelerInfo.id}
-                        otherUserName={travelerInfo.name}
-                        otherUserAvatar={travelerInfo.avatar}
-                        isShipmentDelivered={chatShipment.status === 'delivered'}
-                        deliveredAt={chatShipment.delivered_at}
-                    />
-                )}
-
-                {/* Chats List Dialog for pending shipments */}
-                {chatsListShipmentId && user && (
-                    <ChatsListDialog
-                        open={chatsListOpen}
-                        onOpenChange={setChatsListOpen}
-                        shipmentId={chatsListShipmentId}
-                        currentUserId={user.id}
-                        onSelectUser={(userInfo) => {
-                            setTravelerInfo({ id: userInfo.id, name: userInfo.name, avatar: userInfo.avatar })
-                            const shipment = shipments.find(s => s.id === chatsListShipmentId)
-                            if (shipment) {
-                                setChatShipment(shipment)
-                                setChatOpen(true)
-                                setChatsListOpen(false)
-                            }
-                        }}
-                    />
-                )}
-
-                {/* Rating Dialog */}
-                {selectedShipment && (
-                    <RatingDialog
-                        open={ratingDialogOpen}
-                        onOpenChange={setRatingDialogOpen}
-                        travelerName={selectedShipment.traveler_id ? "Traveler" : "Unknown"}
-                        onSubmit={handleSubmitRating}
-                    />
-                )}
-
-                {/* Bids Modal */}
-                {bidsShipment && (
-                    <ShipmentBidsModal
-                        open={bidsModalOpen}
-                        onOpenChange={setBidsModalOpen}
-                        shipmentId={bidsShipment.id}
-                        shipmentTitle={bidsShipment.title}
-                        initialPrice={bidsShipment.offer_price}
-                        onBidAccepted={fetchShipments}
-                    />
-                )}
             </div>
-        </ProfileCompletionGuard>
+
+
+            {shipments.length === 0 ? (
+                <div className="text-center py-20 border rounded-lg bg-muted/10">
+                    <Package className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <h3 className="mt-4 text-lg font-semibold">No shipments yet</h3>
+                    <p className="text-muted-foreground mb-4">Create your first shipment to get started</p>
+                    <Link href="/sender/create">
+                        <Button>Create Shipment</Button>
+                    </Link>
+                </div>
+            ) : (
+                <div className="grid gap-6 md:grid-cols-2">
+                    {shipments.map((shipment) => (
+                        <ShipmentCard
+                            key={shipment.id}
+                            shipment={shipment}
+                            onRate={handleRateShipment}
+                            isRated={ratedShipments.has(shipment.id)}
+                            onCancelSuccess={fetchShipments}
+                            onViewBids={(shipment) => {
+                                setBidsShipment(shipment)
+                                setBidsModalOpen(true)
+                            }}
+                            onChat={handleOpenChat}
+                            onViewChats={(shipment) => {
+                                setChatsListShipmentId(shipment.id)
+                                setChatsListOpen(true)
+                            }}
+                            isSenderView={true}
+                        />
+                    ))}
+                </div>
+            )}
+
+            {/* Chat Dialog */}
+            {chatShipment && travelerInfo && (
+                <ChatDialog
+                    open={chatOpen}
+                    onOpenChange={setChatOpen}
+                    shipmentId={chatShipment.id}
+                    otherUserId={travelerInfo.id}
+                    otherUserName={travelerInfo.name}
+                    otherUserAvatar={travelerInfo.avatar}
+                    isShipmentDelivered={chatShipment.status === 'delivered'}
+                    deliveredAt={chatShipment.delivered_at}
+                />
+            )}
+
+            {/* Chats List Dialog for pending shipments */}
+            {chatsListShipmentId && user && (
+                <ChatsListDialog
+                    open={chatsListOpen}
+                    onOpenChange={setChatsListOpen}
+                    shipmentId={chatsListShipmentId}
+                    currentUserId={user.id}
+                    onSelectUser={(userInfo) => {
+                        setTravelerInfo({ id: userInfo.id, name: userInfo.name, avatar: userInfo.avatar })
+                        const shipment = shipments.find(s => s.id === chatsListShipmentId)
+                        if (shipment) {
+                            setChatShipment(shipment)
+                            setChatOpen(true)
+                            setChatsListOpen(false)
+                        }
+                    }}
+                />
+            )}
+
+            {/* Rating Dialog */}
+            {selectedShipment && (
+                <RatingDialog
+                    open={ratingDialogOpen}
+                    onOpenChange={setRatingDialogOpen}
+                    travelerName={selectedShipment.traveler_id ? "Traveler" : "Unknown"}
+                    onSubmit={handleSubmitRating}
+                />
+            )}
+
+            {/* Bids Modal */}
+            {bidsShipment && (
+                <ShipmentBidsModal
+                    open={bidsModalOpen}
+                    onOpenChange={setBidsModalOpen}
+                    shipmentId={bidsShipment.id}
+                    shipmentTitle={bidsShipment.title}
+                    initialPrice={bidsShipment.offer_price}
+                    onBidAccepted={fetchShipments}
+                />
+            )}
+        </div>
     )
 }

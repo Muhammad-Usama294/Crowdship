@@ -62,30 +62,37 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
             }
         })
 
-        // Realtime Profile Sync
-        const channel = supabase
-            .channel('profile-changes')
-            .on(
-                'postgres_changes',
-                {
-                    event: 'UPDATE',
-                    schema: 'public',
-                    table: 'users',
-                    filter: user?.id ? `id=eq.${user.id}` : undefined
-                },
-                (payload) => {
-                    console.log('Realtime profile update received:', payload)
-                    setProfile(payload.new as UserProfile)
-                    router.refresh()
-                }
-            )
-            .subscribe()
+        // Realtime Profile Sync - only subscribe if user exists
+        let channel: ReturnType<typeof supabase.channel> | null = null
+
+        if (user?.id) {
+            channel = supabase
+                .channel('profile-changes')
+                .on(
+                    'postgres_changes',
+                    {
+                        event: 'UPDATE',
+                        schema: 'public',
+                        table: 'users',
+                        filter: `id=eq.${user.id}`
+                    },
+                    (payload) => {
+                        console.log('Realtime profile update received:', payload)
+                        setProfile(payload.new as UserProfile)
+                        router.refresh()
+                    }
+                )
+                .subscribe()
+        }
 
         return () => {
             authListener.subscription.unsubscribe()
-            supabase.removeChannel(channel)
+            if (channel) {
+                supabase.removeChannel(channel)
+            }
         }
-    }, [supabase, user?.id])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.id]) // Removed supabase to prevent infinite loop
 
     const toggleTravelerMode = async () => {
         // If trying to switch TO traveler mode, check requirements

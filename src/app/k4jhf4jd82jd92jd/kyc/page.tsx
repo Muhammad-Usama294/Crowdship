@@ -10,7 +10,7 @@ import { Check, X, FileText, User } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { approveKYC, rejectKYC } from "../actions"
+import { approveKYC, rejectKYC, getKYCDocuments } from "../actions"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/use-toast"
@@ -29,17 +29,26 @@ export default function KYCDashboard() {
     }, [activeTab])
 
     async function fetchKYC() {
-        const query = supabase
-            .from('kyc_documents')
-            .select('*, users(*)')
+        console.log('[KYC Page] Fetching KYC docs with activeTab:', activeTab)
+        const result = await getKYCDocuments(activeTab !== "all" ? activeTab : undefined)
 
-        if (activeTab !== "all") {
-            query.eq('status', activeTab)
+        console.log('[KYC Page] Received result:', {
+            hasError: !!result.error,
+            error: result.error,
+            dataLength: result.data?.length || 0
+        })
+
+        if (result.error) {
+            console.error('[KYC Page] Error:', result.error)
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Failed to fetch KYC documents: " + result.error
+            })
+        } else if (result.data) {
+            console.log('[KYC Page] Setting KYC docs:', result.data.length, 'documents')
+            setKycDocs(result.data as any)
         }
-
-        const { data } = await query.order('created_at', { ascending: false })
-
-        if (data) setKycDocs(data as any)
     }
 
     async function handleApprove(id: string, userId: string) {

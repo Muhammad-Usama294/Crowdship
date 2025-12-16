@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
@@ -53,7 +53,8 @@ function MapController({
                 toast({
                     variant: "destructive",
                     title: "Location not supported",
-                    description: "Please select a location within Pakistan."
+                    description: "Please select a location within Pakistan.",
+                    duration: 4000, // Show for 4 seconds
                 })
                 return
             }
@@ -159,16 +160,25 @@ export default function LeafletTravelerView({
 
     }, [routeGeometry, shipments, start, end, onFilteredShipmentsChange])
 
+    // Memoize filteredShipment IDs to prevent unnecessary route fetching
+    const filteredShipmentIds = useMemo(
+        () => filteredShipments.map(s => s.id).join(','),
+        [filteredShipments]
+    )
+
     // State for shipment routes
     const [shipmentRoutes, setShipmentRoutes] = useState<Record<string, [number, number][]>>({})
 
-    // Effect: Fetch individual shipment routes
+    // Effect: Fetch individual shipment routes (limit to first 10 for performance)
     useEffect(() => {
         const fetchShipmentRoutes = async () => {
             const newRoutes: Record<string, [number, number][]> = {}
 
+            // Only fetch routes for first 10 shipments to improve performance
+            const shipmentsToFetch = filteredShipments.slice(0, 10)
+
             // Process in parallel
-            await Promise.all(filteredShipments.map(async (shipment) => {
+            await Promise.all(shipmentsToFetch.map(async (shipment) => {
                 const pickup = parseLoc(shipment.pickup_location)
                 const dropoff = parseLoc(shipment.dropoff_location)
 
@@ -190,7 +200,8 @@ export default function LeafletTravelerView({
         } else {
             setShipmentRoutes({})
         }
-    }, [filteredShipments])
+        // Use memoized IDs to prevent refetch on same shipments
+    }, [filteredShipmentIds])
 
     // Helper to parse location
     const parseLoc = (loc: any) => {
@@ -200,29 +211,33 @@ export default function LeafletTravelerView({
         return null
     }
 
-    // Custom Icons
-    const createCustomIcon = (color: string, label: string) => {
-        return L.divIcon({
-            className: 'custom-div-icon',
-            html: `
-                <div class="relative w-8 h-8 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white" style="background-color: ${color}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        ${label === 'PICKUP'
-                    ? '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>'
-                    : '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>'}
-                    </svg>
-                </div>
-            `,
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
-        })
-    }
+    // Custom Icons - Memoized to prevent recreation on every render
+    const { pickupIcon, dropoffIcon, startIcon, endIcon } = useMemo(() => {
+        const createCustomIcon = (color: string, label: string) => {
+            return L.divIcon({
+                className: 'custom-div-icon',
+                html: `
+                    <div class="relative w-8 h-8 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white" style="background-color: ${color}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            ${label === 'PICKUP'
+                        ? '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>'
+                        : '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>'}
+                        </svg>
+                    </div>
+                `,
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
+                popupAnchor: [0, -32]
+            })
+        }
 
-    const pickupIcon = createCustomIcon('#3b82f6', 'PICKUP')
-    const dropoffIcon = createCustomIcon('#f97316', 'DROPOFF')
-    const startIcon = createCustomIcon('#22c55e', 'PICKUP') // Reusing shape for Start
-    const endIcon = createCustomIcon('#ef4444', 'DROPOFF') // Reusing shape for End
+        return {
+            pickupIcon: createCustomIcon('#3b82f6', 'PICKUP'),
+            dropoffIcon: createCustomIcon('#f97316', 'DROPOFF'),
+            startIcon: createCustomIcon('#22c55e', 'PICKUP'),
+            endIcon: createCustomIcon('#ef4444', 'DROPOFF')
+        }
+    }, []) // Empty deps - icons never change
 
     return (
         <MapContainer

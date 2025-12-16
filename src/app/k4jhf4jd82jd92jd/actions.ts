@@ -235,3 +235,47 @@ export async function getAllActiveShipments(statusFilter?: string, startDate?: s
 
     return { success: true, data: data || [] }
 }
+
+/**
+ * Fetch all KYC documents for admin view
+ * Uses admin client to bypass RLS
+ */
+export async function getKYCDocuments(statusFilter?: string) {
+    console.log('[getKYCDocuments] Starting fetch with filter:', statusFilter)
+
+    try {
+        const supabase = await createAdminClient()
+        console.log('[getKYCDocuments] Admin client created successfully')
+
+        let query = supabase
+            .from('kyc_documents')
+            .select('*, users(*)')
+            .order('created_at', { ascending: false })
+
+        // Apply status filter if provided
+        if (statusFilter && statusFilter !== 'all') {
+            query = query.eq('status', statusFilter)
+            console.log('[getKYCDocuments] Filtering by status:', statusFilter)
+        }
+
+        const { data, error } = await query
+
+        console.log('[getKYCDocuments] Query result:', {
+            dataCount: data?.length || 0,
+            error: error?.message || null,
+            hasData: !!data
+        })
+
+        if (error) {
+            console.error('[getKYCDocuments] Error fetching KYC documents:', error)
+            return { error: error.message, data: [] }
+        }
+
+        console.log('[getKYCDocuments] Returning data with', data?.length || 0, 'documents')
+        return { data: data || [] }
+    } catch (err: any) {
+        console.error('[getKYCDocuments] Exception:', err)
+        return { error: err.message || 'Unknown error', data: [] }
+    }
+}
+

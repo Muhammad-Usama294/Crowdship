@@ -8,6 +8,7 @@ import { Package, Truck, Shield, MapPin, ArrowRight, History as HistoryIcon, Ale
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { toast } from "@/components/ui/use-toast"
 
 export default function HomePage() {
   const { user, isLoading, isTravelerMode, profile } = useUser()

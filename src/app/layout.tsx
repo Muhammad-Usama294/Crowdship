@@ -6,6 +6,7 @@ import { UserProvider } from "@/contexts/user-context";
 import { Navbar } from "@/components/navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,19 +29,21 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <UserProvider>
-            <div className="min-h-screen flex flex-col bg-background text-foreground">
-              <Navbar />
-              <main className="flex-1 relative">
-                {/* Global subtle gradient blob for premium feel */}
-                <div className="fixed inset-0 -z-10 pointer-events-none">
-                  <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-primary/5 to-transparent"></div>
-                </div>
-                {children}
-              </main>
-            </div>
-            <Toaster />
-          </UserProvider>
+          <ErrorBoundary>
+            <UserProvider>
+              <div className="min-h-screen flex flex-col bg-background text-foreground">
+                <Navbar />
+                <main className="flex-1 relative">
+                  {/* Global subtle gradient blob for premium feel */}
+                  <div className="fixed inset-0 -z-10 pointer-events-none">
+                    <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-primary/5 to-transparent"></div>
+                  </div>
+                  {children}
+                </main>
+              </div>
+              <Toaster />
+            </UserProvider>
+          </ErrorBoundary>
         </ThemeProvider>
       </body>
     </html>
