@@ -217,7 +217,7 @@ export default function SenderDashboard() {
                     </Link>
                 </div>
             ) : (
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                     {shipments.map((shipment) => (
                         <ShipmentCard
                             key={shipment.id}

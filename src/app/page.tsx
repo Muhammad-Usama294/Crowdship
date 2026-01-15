@@ -55,7 +55,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
           <Card>
             <CardHeader>
               <Package className="h-12 w-12 mb-4 text-primary" />
@@ -145,7 +145,7 @@ export default function HomePage() {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 max-w-4xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
         {!isTravelerMode && (
           <>
             <Link href="/sender/create">
@@ -240,7 +240,7 @@ export default function HomePage() {
         )}
       </div>
 
-      <div className="text-center mt-12 p-6 bg-muted/50 rounded-lg max-w-2xl mx-auto">
+      <div className="text-center mt-12 p-6 bg-muted/50 rounded-lg max-w-2xl xl:max-w-3xl 2xl:max-w-4xl mx-auto">
         <p className="text-sm text-muted-foreground mb-2">
           💡 <strong>Tip:</strong> Use the toggle switch in the top navigation to switch between Sender and Traveler modes
         </p>

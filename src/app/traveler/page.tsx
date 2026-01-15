@@ -360,17 +360,17 @@ function TravelerContent() {
         <div className="flex flex-col h-[calc(100vh-4rem)] md:flex-row overflow-hidden bg-background relative">
 
             {/* Left Sidebar (Desktop) / Bottom Sheet (Mobile) - Controls & List */}
-            <div className={`w-full md:w-[400px] lg:w-[450px] z-20 flex flex-col bg-card/40 backdrop-blur-xl border-r h-full absolute md:relative transition-transform duration-300 ${showMobileList ? 'translate-y-0' : 'translate-y-[calc(100%-80px)]'} md:translate-y-0`}>
+            <div className={`w-full md:w-[400px] lg:w-[450px] xl:w-[500px] 2xl:w-[550px] z-20 flex flex-col bg-card/95 backdrop-blur-xl border-r md:h-full md:relative fixed bottom-0 left-0 right-0 md:bottom-auto md:left-auto md:right-auto transition-all duration-300 ${showMobileList ? 'h-[85vh]' : 'h-auto max-h-[280px]'} md:max-h-none rounded-t-2xl md:rounded-none shadow-[0_-4px_20px_rgba(0,0,0,0.15)] md:shadow-none`}>
 
                 {/* Mobile Handle */}
                 <div className="md:hidden h-6 w-full flex items-center justify-center cursor-pointer bg-muted/50 border-t md:border-t-0" onClick={() => setShowMobileList(!showMobileList)}>
                     <div className="w-12 h-1 bg-muted-foreground/30 rounded-full" />
                 </div>
 
-                <div className="p-4 md:p-6 flex flex-col h-full overflow-hidden">
+                <div className="p-4 md:p-6 flex flex-col flex-1 overflow-hidden">
                     <div className="mb-6">
-                        <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">Find Packages</h1>
-                        <p className="text-sm text-muted-foreground">Select your route to find matching shipments.</p>
+                        <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">Find Packages</h1>
+                        <p className="text-xs md:text-sm text-muted-foreground">Select your route to find matching shipments.</p>
                     </div>
 
                     <div className="space-y-4 mb-6">
@@ -422,15 +422,6 @@ function TravelerContent() {
                             Find Available Shipments
                         </Button>
 
-                        {/* Mobile Map Toggle */}
-                        <Button
-                            variant="outline"
-                            className="w-full mt-2 md:hidden"
-                            onClick={() => setShowMapModal(true)}
-                        >
-                            <MapIcon className="mr-2 h-4 w-4" />
-                            View Map
-                        </Button>
                     </div>
 
                     {/* Results Count & Filter Info */}
@@ -446,7 +437,7 @@ function TravelerContent() {
                     )}
 
                     {/* Scrollable List */}
-                    <div className="flex-1 overflow-y-auto pr-1 space-y-3 pb-20 md:pb-0 scrollbar-hide">
+                    <div className={`flex-1 overflow-y-auto pr-1 space-y-3 pb-4 md:pb-0 scrollbar-hide ${showMobileList ? '' : 'hidden md:block'}`}>
                         <AnimatePresence>
                             {displayedShipments.length === 0 && !isSearching && start && end && (
                                 <motion.div
@@ -554,13 +545,15 @@ function TravelerContent() {
                 </div>
             </div>
 
-            {/* Map Area */}
-            <div className={`${showMapModal ? 'fixed inset-0 z-[50] flex flex-col bg-background' : 'hidden md:flex flex-1 h-full relative z-10 w-full'}`}>
-                {/* Mobile Map Header */}
-                <div className="md:hidden flex items-center justify-between p-4 border-b bg-background/80 backdrop-blur-md absolute top-0 left-0 right-0 z-[1001]">
-                    <h3 className="font-semibold text-lg">Route Map</h3>
-                    <Button size="sm" onClick={() => setShowMapModal(false)}>Done</Button>
-                </div>
+            {/* Map Area - Always visible on mobile behind the bottom sheet */}
+            <div className={`${showMapModal ? 'fixed inset-0 z-[50] flex flex-col bg-background' : 'flex flex-1 h-full relative z-10 w-full'}`}>
+                {/* Mobile Map Header - Only show when in fullscreen modal */}
+                {showMapModal && (
+                    <div className="md:hidden flex items-center justify-between p-4 border-b bg-background/80 backdrop-blur-md absolute top-0 left-0 right-0 z-[1001]">
+                        <h3 className="font-semibold text-lg">Route Map</h3>
+                        <Button size="sm" onClick={() => setShowMapModal(false)}>Done</Button>
+                    </div>
+                )}
                 {/* Search Hint Overlay */}
                 {selectionMode && (
                     <div className="absolute top-6 left-1/2 -translate-x-1/2 z-[1000] bg-background/90 backdrop-blur-md px-6 py-3 rounded-full shadow-xl border-2 border-primary text-sm font-semibold animate-in fade-in slide-in-from-top-4 flex items-center gap-2 text-primary">

@@ -27,72 +27,94 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     const router = useRouter()
 
     useEffect(() => {
+        let isMounted = true
+
         const fetchUser = async () => {
-            const { data: { session } } = await supabase.auth.getSession()
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession()
 
-            if (session?.user) {
-                setUser(session.user)
-                const { data } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('id', session.user.id)
-                    .single()
-                setProfile(data)
-            }
-            setIsLoading(false)
-        }
+                if (error) {
+                    console.error('Error getting session:', error)
+                    if (isMounted) setIsLoading(false)
+                    return
+                }
 
-        fetchUser()
-
-        const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-            if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-                if (session?.user && session.user.id !== user?.id) {
+                if (session?.user && isMounted) {
                     setUser(session.user)
                     const { data } = await supabase
                         .from('users')
                         .select('*')
                         .eq('id', session.user.id)
                         .single()
-                    setProfile(data)
+                    if (isMounted) setProfile(data)
+                }
+            } catch (err) {
+                console.error('Error in fetchUser:', err)
+            } finally {
+                if (isMounted) setIsLoading(false)
+            }
+        }
+
+        fetchUser()
+
+        const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (!isMounted) return
+
+            if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
+                if (session?.user) {
+                    setUser(session.user)
+                    try {
+                        const { data } = await supabase
+                            .from('users')
+                            .select('*')
+                            .eq('id', session.user.id)
+                            .single()
+                        if (isMounted) setProfile(data)
+                    } catch (err) {
+                        console.error('Error fetching profile:', err)
+                    }
+                    setIsLoading(false)
                 }
             } else if (event === 'SIGNED_OUT') {
                 setUser(null)
                 setProfile(null)
                 setIsTravelerMode(false)
+                setIsLoading(false)
             }
         })
 
-        // Realtime Profile Sync - only subscribe if user exists
-        let channel: ReturnType<typeof supabase.channel> | null = null
-
-        if (user?.id) {
-            channel = supabase
-                .channel('profile-changes')
-                .on(
-                    'postgres_changes',
-                    {
-                        event: 'UPDATE',
-                        schema: 'public',
-                        table: 'users',
-                        filter: `id=eq.${user.id}`
-                    },
-                    (payload) => {
-                        console.log('Realtime profile update received:', payload)
-                        setProfile(payload.new as UserProfile)
-                        router.refresh()
-                    }
-                )
-                .subscribe()
+        return () => {
+            isMounted = false
+            authListener.subscription.unsubscribe()
         }
+    }, []) // Empty dependency - run once on mount
+
+    // Separate effect for realtime profile sync
+    useEffect(() => {
+        if (!user?.id) return
+
+        const channel = supabase
+            .channel('profile-changes')
+            .on(
+                'postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'users',
+                    filter: `id=eq.${user.id}`
+                },
+                (payload) => {
+                    console.log('Realtime profile update received:', payload)
+                    setProfile(payload.new as UserProfile)
+                    router.refresh()
+                }
+            )
+            .subscribe()
 
         return () => {
-            authListener.subscription.unsubscribe()
-            if (channel) {
-                supabase.removeChannel(channel)
-            }
+            supabase.removeChannel(channel)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user?.id]) // Removed supabase to prevent infinite loop
+    }, [user?.id, router])
 
     const toggleTravelerMode = async () => {
         // If trying to switch TO traveler mode, check requirements

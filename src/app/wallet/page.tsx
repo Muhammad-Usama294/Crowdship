@@ -111,11 +111,11 @@ export default function WalletPage() {
     if (loading) return <div className="container py-10">Loading...</div>
 
     return (
-        <div className="container py-8 max-w-5xl">
+        <div className="container py-8 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl">
             <h1 className="text-3xl font-bold mb-6">Wallet & Payments</h1>
 
             {/* Balance Cards */}
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <div className="grid md:grid-cols-3 xl:grid-cols-3 gap-6 mb-8">
                 <Card>
                     <CardHeader className="pb-3">
                         <CardDescription className="flex items-center gap-2">

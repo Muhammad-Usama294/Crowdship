@@ -161,7 +161,7 @@ export default function CreateShipmentPage() {
     return (
         <div className="flex flex-col h-[calc(100vh-4rem)] md:flex-row overflow-hidden bg-background">
             {/* Left Panel: Form */}
-            <div className="w-full md:w-[450px] lg:w-[500px] h-full overflow-y-auto p-4 md:p-6 border-r bg-card/30 backdrop-blur-sm z-10 shadow-xl scrollbar-hide">
+            <div className="w-full md:w-[450px] lg:w-[500px] xl:w-[550px] 2xl:w-[600px] h-full overflow-y-auto p-4 md:p-6 border-r bg-card/30 backdrop-blur-sm z-10 shadow-xl scrollbar-hide">
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}

@@ -206,7 +206,7 @@ export default function TravelerDashboard() {
                         <p className="text-muted-foreground">Find packages to deliver in the Trip Planner.</p>
                     </div>
                 ) : (
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4">
                         {shipments.map((shipment) => (
                             <Card key={shipment.id} className={shipment.status === 'delivered' ? 'opacity-70 bg-muted/30' : ''}>
                                 <CardHeader className="pb-2">

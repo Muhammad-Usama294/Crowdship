@@ -104,7 +104,7 @@ export default function AdminDashboardPage() {
                 </motion.div>
             )}
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
                 {cards.map((card, index) => (
                     <motion.div
                         key={card.title}
