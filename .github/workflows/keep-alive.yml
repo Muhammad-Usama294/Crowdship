@@ -2,19 +2,25 @@ name: Supabase Keep Alive
 
 on:
   schedule:
-    # Runs at 00:00 every Monday and Thursday (Twice a week is plenty!)
+    # Runs at 00:00 every Monday and Thursday
     - cron: '0 0 * * 1,4'
-  workflow_dispatch: # Allows you to trigger this manually from the Actions tab
+  workflow_dispatch: # Allows manual trigger from the Actions tab
 
 jobs:
   ping:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write # Needed so the workflow can use the GitHub API to refresh itself
     steps:
       - name: Ping Supabase Health Endpoint
         run: |
           curl -i -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/" \
             -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
-            # Append this right below your curl step in keep-alive.yml
-      - name: Keep GitHub Action Alive
-        uses: gautamkrishnar/keepalive-workflow@v2
+
+      - name: Prevent GitHub Cron Inactivity Disabling
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Uses the official GitHub CLI to natively enable the workflow, resetting the 60-day timer
+          gh api -X PUT /repos/${{ github.repository }}/actions/workflows/keep-alive.yml/enable
