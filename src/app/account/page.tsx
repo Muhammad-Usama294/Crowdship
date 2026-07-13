@@ -197,7 +197,7 @@ export default function AccountPage() {
                     <UserCircle className="h-7 w-7" />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">Account Settings</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-foreground">Account Settings</h1>
                     <p className="text-muted-foreground">Manage your profile, security, and preferences.</p>
                 </div>
             </motion.div>
@@ -242,7 +242,7 @@ export default function AccountPage() {
                                                 {fullName?.charAt(0) || "U"}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <Label htmlFor="avatar" className="absolute bottom-0 right-0 bg-primary hover:bg-primary/90 text-white p-2 rounded-full shadow-lg cursor-pointer transition-transform hover:scale-105">
+                                        <Label htmlFor="avatar" className="absolute bottom-0 right-0 bg-primary hover:bg-primary/90 text-white p-2 rounded-full shadow-lg cursor-pointer transition-colors">
                                             <Camera className="h-5 w-5" />
                                         </Label>
                                         <Input

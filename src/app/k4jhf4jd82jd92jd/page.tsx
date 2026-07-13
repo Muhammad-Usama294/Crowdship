@@ -45,7 +45,6 @@ export default function AdminDashboardPage() {
             description: "Review pending identity verifications and manage user approvals.",
             icon: Shield,
             color: "text-blue-500",
-            borderColor: "border-l-blue-500",
             buttonColor: "bg-blue-600 hover:bg-blue-700"
         },
         {
@@ -54,7 +53,6 @@ export default function AdminDashboardPage() {
             description: "View system health, user growth, shipment stats, and revenue metrics.",
             icon: BarChart3,
             color: "text-purple-500",
-            borderColor: "border-l-purple-500",
             buttonColor: "bg-purple-600 hover:bg-purple-700"
         },
         {
@@ -63,7 +61,6 @@ export default function AdminDashboardPage() {
             description: "View all users, monitor ratings, and manage suspensions or bans.",
             icon: Users,
             color: "text-orange-500",
-            borderColor: "border-l-orange-500",
             buttonColor: "bg-orange-600 hover:bg-orange-700"
         },
         {
@@ -72,7 +69,6 @@ export default function AdminDashboardPage() {
             description: "Monitor active shipments geographically. View pickup and dropoff locations.",
             icon: Map,
             color: "text-green-500",
-            borderColor: "border-l-green-500",
             buttonColor: "bg-green-600 hover:bg-green-700"
         }
     ]
@@ -85,7 +81,7 @@ export default function AdminDashboardPage() {
                 transition={{ duration: 0.5 }}
                 className="mb-10 text-center md:text-left"
             >
-                <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent inline-block">Admin Dashboard</h1>
+                <h1 className="text-4xl font-bold mb-2 text-foreground inline-block">Admin Dashboard</h1>
                 <p className="text-lg text-muted-foreground">Welcome back, Admin. Select an area to manage.</p>
             </motion.div>
 
@@ -104,39 +100,38 @@ export default function AdminDashboardPage() {
                 </motion.div>
             )}
 
-            <div className="grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
-                {cards.map((card, index) => (
-                    <motion.div
-                        key={card.title}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: index * 0.1, duration: 0.4 }}
-                    >
-                        <Link href={card.href} className="block h-full">
-                            <Card className={`group h-full transition-all duration-300 hover:shadow-xl hover:scale-[1.02] cursor-pointer border-l-4 ${card.borderColor} bg-card/60 backdrop-blur-sm overflow-hidden`}>
-                                <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity ${card.color}`}>
-                                    <card.icon className="w-24 h-24" />
-                                </div>
-                                <CardHeader>
-                                    <div className="flex items-center gap-4 mb-2">
-                                        <div className={`p-3 rounded-full bg-background/50 shadow-sm ${card.color}`}>
-                                            <card.icon className="h-6 w-6" />
-                                        </div>
-                                        <CardTitle className="text-xl group-hover:text-primary transition-colors">{card.title}</CardTitle>
+            <div className="max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto space-y-6">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-semibold tracking-tight">System Modules</h2>
+                </div>
+
+                <div className="border rounded-xl overflow-hidden bg-card/60 backdrop-blur-sm shadow-sm">
+                    <div className="grid grid-cols-1 divide-y divide-border/50">
+                        {cards.map((card, index) => (
+                            <motion.div
+                                key={card.title}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.05, duration: 0.3 }}
+                            >
+                                <Link href={card.href} className="flex items-center p-4 sm:p-5 hover:bg-muted/50 transition-colors group">
+                                    <div className={`p-2.5 rounded-md bg-background/50 border shadow-sm mr-4 shrink-0 ${card.color}`}>
+                                        <card.icon className="h-5 w-5" />
                                     </div>
-                                    <CardDescription className="text-base">
-                                        {card.description}
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <Button className={`w-full ${card.buttonColor} shadow-md`}>
-                                        Manage <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                        </Link>
-                    </motion.div>
-                ))}
+                                    <div className="flex-1 min-w-0 pr-4">
+                                        <h3 className="text-sm font-semibold truncate group-hover:text-primary transition-colors">{card.title}</h3>
+                                        <p className="text-sm text-muted-foreground truncate">{card.description}</p>
+                                    </div>
+                                    <div className="shrink-0">
+                                        <Button variant="ghost" size="sm" className="h-8 gap-1 group-hover:bg-background shadow-sm border border-transparent group-hover:border-border transition-all">
+                                            Manage <ArrowRight className="h-3.5 w-3.5" />
+                                        </Button>
+                                    </div>
+                                </Link>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
             </div>
         </div>
     )

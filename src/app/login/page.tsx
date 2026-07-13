@@ -99,12 +99,8 @@ export default function LoginPage() {
 
     return (
         <div className="relative flex items-center justify-center min-h-[calc(100vh-4rem)] overflow-hidden bg-background">
-            {/* Animated Background */}
-            <div className="absolute inset-0 -z-10">
-                <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-                <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-            </div>
+            {/* Clean Background */}
+            <div className="absolute inset-0 -z-10 bg-muted/30"></div>
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -114,7 +110,7 @@ export default function LoginPage() {
             >
                 <Card className="border-2 border-primary/10 shadow-xl backdrop-blur-sm bg-card/80">
                     <CardHeader className="space-y-1 text-center">
-                        <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                        <CardTitle className="text-3xl font-bold text-foreground">
                             {isSignUp ? 'Create Account' : 'Welcome Back'}
                         </CardTitle>
                         <CardDescription>
@@ -168,7 +164,7 @@ export default function LoginPage() {
                                 )}
                             </div>
 
-                            <Button type="submit" className="w-full bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 transition-all duration-300" disabled={loading}>
+                            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 transition-all duration-300" disabled={loading}>
                                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 {isSignUp ? 'Sign Up' : 'Sign In'}
                                 {!loading && <ArrowRight className="ml-2 h-4 w-4" />}

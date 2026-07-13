@@ -208,16 +208,25 @@ export default function SenderDashboard() {
 
 
             {shipments.length === 0 ? (
-                <div className="text-center py-20 border rounded-lg bg-muted/10">
-                    <Package className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <h3 className="mt-4 text-lg font-semibold">No shipments yet</h3>
-                    <p className="text-muted-foreground mb-4">Create your first shipment to get started</p>
-                    <Link href="/sender/create">
-                        <Button>Create Shipment</Button>
-                    </Link>
+                <div className="text-center py-20 px-4 border rounded-xl bg-card/60 backdrop-blur-sm shadow-sm">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Package className="h-8 w-8 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-foreground">No active shipments</h3>
+                    <p className="text-sm text-muted-foreground mt-3 max-w-md mx-auto">
+                        Create a shipment to connect with trusted travelers heading to your destination. Payments are securely held in escrow until delivery is confirmed.
+                    </p>
+                    <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <Link href="/sender/create">
+                            <Button className="w-full sm:w-auto font-medium">Create First Shipment</Button>
+                        </Link>
+                        <Link href="/">
+                            <Button variant="ghost" className="w-full sm:w-auto">How it works</Button>
+                        </Link>
+                    </div>
                 </div>
             ) : (
-                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <div className="flex flex-col gap-4 max-w-4xl mx-auto w-full">
                     {shipments.map((shipment) => (
                         <ShipmentCard
                             key={shipment.id}
@@ -235,6 +244,7 @@ export default function SenderDashboard() {
                                 setChatsListOpen(true)
                             }}
                             isSenderView={true}
+                            variant="list"
                         />
                     ))}
                 </div>

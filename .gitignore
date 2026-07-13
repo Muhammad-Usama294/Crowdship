@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.agents/
+
+# Ignore the installed local AI agent skills
+.github/skills/
+.github/hooks/

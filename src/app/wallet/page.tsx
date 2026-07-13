@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Wallet, ArrowUpCircle, ArrowDownCircle, DollarSign, TrendingUp } from "lucide-react"
+import { Wallet, ArrowUpCircle, ArrowDownCircle, DollarSign, TrendingUp, Info } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/components/ui/use-toast"
 
@@ -20,6 +20,8 @@ interface Transaction {
     status: string
     created_at: string
 }
+
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 export default function WalletPage() {
     const { user, profile } = useUser()
@@ -135,6 +137,14 @@ export default function WalletPage() {
                         <CardDescription className="flex items-center gap-2">
                             <ArrowDownCircle className="h-4 w-4" />
                             In Escrow
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Info className="h-3.5 w-3.5 text-muted-foreground/70 cursor-help hover:text-primary transition-colors" />
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-[250px] p-3 text-xs">
+                                    <p>Funds held securely by Crowdship during an active delivery. They are released to the traveler only when the delivery is confirmed.</p>
+                                </TooltipContent>
+                            </Tooltip>
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -208,8 +218,22 @@ export default function WalletPage() {
                 </CardHeader>
                 <CardContent>
                     {transactions.length === 0 ? (
-                        <div className="text-center py-8 text-muted-foreground">
-                            No transactions yet
+                        <div className="text-center py-16 px-4 border rounded-lg bg-muted/10">
+                            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Wallet className="h-8 w-8 text-primary" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-foreground">No transactions yet</h3>
+                            <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto">
+                                When you send a package, your payment is held safely in Escrow. When you deliver a package, your earnings will appear here.
+                            </p>
+                            <div className="flex items-center justify-center gap-4 mt-6">
+                                <Link href="/sender/create">
+                                    <Button variant="outline">Send a Package</Button>
+                                </Link>
+                                <Link href="/traveler">
+                                    <Button>Find Deliveries</Button>
+                                </Link>
+                            </div>
                         </div>
                     ) : (
                         <div className="space-y-3">

@@ -369,7 +369,7 @@ function TravelerContent() {
 
                 <div className="p-4 md:p-6 flex flex-col flex-1 overflow-hidden">
                     <div className="mb-6">
-                        <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">Find Packages</h1>
+                        <h1 className="text-xl md:text-2xl font-bold text-foreground">Find Packages</h1>
                         <p className="text-xs md:text-sm text-muted-foreground">Select your route to find matching shipments.</p>
                     </div>
 
@@ -557,7 +557,7 @@ function TravelerContent() {
                 {/* Search Hint Overlay */}
                 {selectionMode && (
                     <div className="absolute top-6 left-1/2 -translate-x-1/2 z-[1000] bg-background/90 backdrop-blur-md px-6 py-3 rounded-full shadow-xl border-2 border-primary text-sm font-semibold animate-in fade-in slide-in-from-top-4 flex items-center gap-2 text-primary">
-                        <MapPin className="h-4 w-4 animate-bounce" />
+                        <MapPin className="h-4 w-4" />
                         Click map to set {selectionMode === 'start' ? 'Origin' : 'Destination'}
                     </div>
                 )}

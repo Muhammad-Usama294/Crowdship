@@ -175,7 +175,7 @@ export default function CreateShipmentPage() {
                     </div>
 
                     <div className="mb-8">
-                        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">Create Shipment</h1>
+                        <h1 className="text-3xl font-bold text-foreground">Create Shipment</h1>
                         <p className="text-muted-foreground">Fill in the details for your package delivery.</p>
                     </div>
 
@@ -355,7 +355,7 @@ export default function CreateShipmentPage() {
 
                         <Button
                             type="submit"
-                            className="w-full bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg shadow-primary/25 h-12 text-md font-semibold"
+                            className="w-full bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25 h-12 text-md font-semibold"
                             disabled={loading}
                         >
                             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <div className="flex items-center">Create Shipment <ArrowRight className="ml-2 h-5 w-5" /></div>}
@@ -376,7 +376,7 @@ export default function CreateShipmentPage() {
 
                 {/* Map interaction hint overlay */}
                 {selectingLocation && (
-                    <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground px-4 py-2 rounded-full shadow-lg font-medium animate-bounce z-[400] pointer-events-none">
+                    <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground px-4 py-2 rounded-full shadow-lg font-medium animate-in fade-in slide-in-from-top-4 z-[400] pointer-events-none">
                         Click on map to set {selectingLocation} location
                     </div>
                 )}

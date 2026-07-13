@@ -33,7 +33,7 @@ export function Navbar() {
                         <div className="bg-primary text-primary-foreground p-1.5 rounded-lg">
                             <Box className="h-5 w-5" />
                         </div>
-                        <span className="hidden font-bold sm:inline-block text-lg bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                        <span className="hidden font-bold sm:inline-block text-lg text-primary">
                             CrowdShip
                         </span>
                     </Link>
@@ -45,7 +45,7 @@ export function Navbar() {
                         <div className="bg-primary text-primary-foreground p-1.5 rounded-lg">
                             <Box className="h-5 w-5" />
                         </div>
-                        <span className="hidden sm:inline font-bold text-lg bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                        <span className="hidden sm:inline font-bold text-lg text-primary">
                             CrowdShip
                         </span>
                     </Link>

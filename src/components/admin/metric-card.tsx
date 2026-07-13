@@ -17,7 +17,7 @@ interface MetricCardProps {
 
 export function MetricCard({ title, value, subtitle, icon: Icon, trend, className }: MetricCardProps) {
     return (
-        <Card className={`hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border-primary/5 bg-card/60 backdrop-blur-sm ${className}`}>
+        <Card className={`hover:shadow-lg transition-all duration-300 border-primary/5 bg-card/60 backdrop-blur-sm ${className}`}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{title}</CardTitle>
                 <div className="p-2 rounded-full bg-primary/10">

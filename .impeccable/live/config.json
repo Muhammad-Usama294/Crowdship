@@ -1,0 +1,7 @@
+{
+  "files": ["src/app/**/*.tsx", "src/app/**/*.ts", "src/components/**/*.tsx"],
+  "insertBefore": "<!-- impeccable-live -->",
+  "commentSyntax": "html",
+  "framework": "nextjs",
+  "cspChecked": true
+}
