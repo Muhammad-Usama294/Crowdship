@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Wallet, ArrowUpCircle, ArrowDownCircle, DollarSign, TrendingUp, Info } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/components/ui/use-toast"
+import Link from "next/link"
 
 
 interface Transaction {
