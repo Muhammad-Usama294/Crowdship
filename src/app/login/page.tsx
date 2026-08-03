@@ -118,6 +118,10 @@ export default function LoginPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
+                         <p className="mb-4 text-center text-sm text-muted-foreground">
+                            Use <span className="font-medium">dummy1@crowdship.test</span> and <span className="font-medium">123456</span> as password to test the app
+                        </p>
+
                         {message && (
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
